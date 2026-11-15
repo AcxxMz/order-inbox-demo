@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order Inbox Demo</title>
+<meta name="description" content="Customer purchase orders in, checked draft sales orders out. Live demo with sample documents.">
+<meta property="og:title" content="Order Inbox Demo">
+<meta property="og:description" content="Customer purchase orders in, checked draft sales orders out. Live demo with sample documents.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f5c4a'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h8' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1d2321;--muted:#5e6964;--line:#e2e0d9;--accent:#1f5c4a;--accent-ink:#fff;--ok:#1f7a4d;--ok-bg:#e5f3ea;--warn:#a5520c;--warn-bg:#fcefdf;--bad:#b42318;--bad-bg:#fde8e6;--code:#f0efe9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141816;--card:#1c211f;--ink:#e8ece9;--muted:#9aa5a0;--line:#2e3532;--accent:#5fbf9a;--accent-ink:#0d1210;--ok:#6fd39f;--ok-bg:#183326;--warn:#f0a75a;--warn-bg:#3a2a17;--bad:#ff8a7e;--bad-bg:#3d1d1a;--code:#252b28}}
+:root[data-theme="dark"]{--bg:#141816;--card:#1c211f;--ink:#e8ece9;--muted:#9aa5a0;--line:#2e3532;--accent:#5fbf9a;--accent-ink:#0d1210;--ok:#6fd39f;--ok-bg:#183326;--warn:#f0a75a;--warn-bg:#3a2a17;--bad:#ff8a7e;--bad-bg:#3d1d1a;--code:#252b28}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 16px 48px}
+header h1{font-size:28px;margin:0 0 6px;letter-spacing:-.01em}
+header p{margin:0;color:var(--muted);max-width:720px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px;padding:0;list-style:none}
+.steps li{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--muted)}
+.steps b{color:var(--ink)}
+.grid{display:grid;grid-template-columns:240px 1fr;gap:18px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h2{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px}
+.inbox button{display:block;width:100%;text-align:left;background:none;border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin:0 0 8px;color:var(--ink);cursor:pointer;font:inherit}
+.inbox button:hover{border-color:var(--accent)}
+.inbox button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
+.inbox small{display:block;color:var(--muted);font-size:12px}
+.pane{display:grid;grid-template-columns:minmax(200px,300px) minmax(0,1fr);gap:18px}
+@media (max-width:1000px){.pane{grid-template-columns:1fr}.pane canvas{max-width:420px}}
+td.item{min-width:190px}
+canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px;margin-bottom:12px}
+.meta dt{color:var(--muted)}
+.meta dd{margin:0;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+td.num,th.num{text-align:right;white-space:nowrap}
+code{background:var(--code);padding:1px 5px;border-radius:5px;font-size:12.5px}
+.tag{display:inline-block;border-radius:6px;padding:2px 7px;font-size:12px;font-weight:600}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.warn{background:var(--warn-bg);color:var(--warn)}.tag.bad{background:var(--bad-bg);color:var(--bad)}
+.why{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.summary{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{border:0;border-radius:9px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+.toast{margin-top:10px;padding:10px 12px;border-radius:9px;background:var(--ok-bg);color:var(--ok);font-size:13.5px;display:none}
+.empty{color:var(--muted);padding:40px 0;text-align:center}
+.hscroll{overflow-x:auto}
+footer{margin-top:28px;color:var(--muted);font-size:13px}
+.cta{margin-top:18px;padding:14px 16px;border-radius:12px;border:1px dashed var(--accent)}
+.cta b{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Order inbox demo</h1>
+    <p>Customer purchase orders arrive in three different layouts. Each one is read, matched to the supplier's own product codes, checked against the agreed price list, and turned into a draft sales order. Nothing is posted without a person approving it. Anything unusual is flagged with the reason.</p>
+  </header>
+  <ol class="steps">
+    <li><b>1</b> PO arrives by email</li><li><b>2</b> Fields read from the PDF</li><li><b>3</b> Codes, units and prices checked</li><li><b>4</b> Draft order for review</li><li><b>5</b> Approved order goes into the accounts system</li>
+  </ol>
+
+  <div class="grid">
+    <section class="card inbox" aria-label="Sample inbox">
+      <h2>Inbox (sample)</h2>
+      <div id="inbox"></div>
+      <p class="note">Brightwell Trade Supplies and its customers are fictional. All documents are samples.</p>
+    </section>
+
+    <section class="card" aria-live="polite">
+      <div id="result"><p class="empty">Pick a purchase order from the inbox.</p></div>
+    </section>
+  </div>
+
+  <div class="cta">Want to see this on <b>your own purchase orders</b>? Ask for a free accuracy test on 20 recent POs (redacted is fine) by replying to the email that brought you here.</div>
+
+  <footer>
+    In a live setup the approved draft is created directly in the supplier's system (for example Sage 200, QuickBooks Online, MYOB, Business Central, Unleashed or Cin7), or exported as an import file. Each new customer layout is a one-time setup. Fictional businesses and sample documents.
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const CATALOG = {
+  'BW-CBL-T25': {desc: 'Twin & Earth cable 2.5mm, 100m drum', price: 96.40},
+  'BW-CBL-T15': {desc: 'Twin & Earth cable 1.5mm, 100m drum', price: 71.90},
+  'BW-SKT-DS13': {desc: 'Double switched socket 13A, white', price: 3.85},
+  'BW-MCB-B32': {desc: 'MCB Type B 32A', price: 6.20},
+  'BW-GLD-20': {desc: 'Cable gland 20mm', price: 0.95},
+  'BW-RCD-63': {desc: 'RCD 63A 30mA', price: 29.50},
+  'BW-LED-6FR': {desc: 'LED downlight 6W fire rated', price: 8.40},
+  'BW-CU15-3M': {desc: 'Copper pipe 15mm x 3m', price: 12.10},
+  'BW-PF-ELB15': {desc: 'Push-fit elbow 15mm', price: 1.05}
+};
+const CUSTOMERS = {
+  harbour: {name: 'Harbour Electrical Ltd', account: 'HAR001'},
+  kestrel: {name: 'Kestrel Building Services', account: 'KES0042', map: {'K-1102': 'BW-LED-6FR', 'K-2210': 'BW-CU15-3M', 'K-0450': 'BW-PF-ELB15'}},
+  moorside: {name: 'Moorside Facilities Ltd', account: 'MOO010'}
+};
+const PACKS = {EACH: 1, BOX10: 10, BOX50: 50};
+const SAMPLES = [
+  {file: 'harbour_HE-24817.pdf', label: 'Harbour Electrical', sub: 'PO HE-24817 · table layout'},
+  {file: 'harbour_HE-24903.pdf', label: 'Harbour Electrical', sub: 'PO HE-24903 · table layout'},
+  {file: 'kestrel_KBS-7731.pdf', label: 'Kestrel Building Services', sub: 'Their own item numbers, boxes'},
+  {file: 'kestrel_KBS-7760.pdf', label: 'Kestrel Building Services', sub: 'Their own item numbers'},
+  {file: 'moorside_MF-0391.pdf', label: 'Moorside Facilities', sub: 'Written as a letter'},
+  {file: 'moorside_MF-0394.pdf', label: 'Moorside Facilities', sub: 'Written as a letter'}
+];
+
+const gbp = v => '£' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const num = s => parseFloat(String(s).replace(/[£,\s]/g, ''));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+
+async function readPdf(url, canvas) {
+  const pdf = await pdfjsLib.getDocument(url).promise;
+  const page = await pdf.getPage(1);
+  const vp = page.getViewport({scale: 1.6});
+  canvas.width = vp.width; canvas.height = vp.height;
+  await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise;
+  const tc = await page.getTextContent();
+  const rows = new Map();
+  for (const it of tc.items) {
+    if (!it.str.trim()) continue;
+    const y = Math.round(it.transform[5]);
+    if (!rows.has(y)) rows.set(y, []);
+    rows.get(y).push({x: it.transform[4], s: it.str.trim()});
+  }
+  return [...rows.entries()].sort((a, b) => b[0] - a[0]).map(([, segs]) => segs.sort((a, b) => a.x - b.x));
+}
+
+function parse(lines) {
+  const text = lines.map(l => l.map(s => s.s).join(' '));
+  const all = text.join('\n');
+  if (/HARBOUR ELECTRICAL/.test(all)) {
+    const po = (all.match(/PO No:\s*(\S+)/) || [])[1];
+    const date = (all.match(/Date:\s*(\S+)/) || [])[1];
+    const items = [];
+    let docTotal = null;
+    for (const l of lines) {
+      if (l.length >= 6 && /^\d+$/.test(l[0].s)) items.push({ref: l[1].s, text: l[2].s, qty: num(l[3].s), price: num(l[4].s), stated: num(l[5].s), unit: 'EACH'});
+      if (l[0].s === 'Order Total:') docTotal = num(l[1].s);
+    }
+    return {customer: 'harbour', po, date, items, docTotal};
+  }
+  if (/Kestrel Building Services/.test(all)) {
+    const po = (all.match(/Order Ref\s+(\S+)/) || [])[1];
+    const date = (all.match(/Order Date\s+(.+)/) || [])[1];
+    const items = lines.filter(l => l.length >= 5 && /^K-\d+/.test(l[0].s))
+      .map(l => ({ref: l[0].s, qty: num(l[1].s), unit: l[2].s, text: l[3].s, price: num(l[4].s)}));
+    return {customer: 'kestrel', po, date, items};
+  }
+  if (/Moorside Facilities/.test(all)) {
+    const m = all.match(/Purchase order (\S+) - raised (.+)/) || [];
+    const items = [];
+    for (const t of text) {
+      const r = t.match(/^(\d+) x (\S+)\s+(.+?)\s+@ £([\d.,]+)/);
+      if (r) items.push({ref: r[2], qty: +r[1], text: r[3], price: num(r[4]), unit: 'EACH'});
+    }
+    return {customer: 'moorside', po: m[1], date: m[2], items};
+  }
+  return null;
+}
+
+function check(doc) {
+  const cust = CUSTOMERS[doc.customer];
+  const out = doc.items.map((it, i) => {
+    const code = (cust.map && cust.map[it.ref]) || (CATALOG[it.ref] ? it.ref : null);
+    const flags = [];
+    if (!code) return {n: i + 1, it, code: null, status: 'bad', flags: [`Customer code ${it.ref} has no match in the product list. Needs a one-time mapping.`]};
+    const pack = PACKS[it.unit] || 1;
+    const qtyEach = it.qty * pack;
+    const listEach = CATALOG[code].price;
+    const poEach = it.price / pack;
+    if (pack > 1) flags.push({ok: true, msg: `${it.qty} × ${it.unit} converted to ${qtyEach} each`});
+    if (cust.map && cust.map[it.ref]) flags.push({ok: true, msg: `${it.ref} matched to ${code}`});
+    if (Math.abs(poEach - listEach) > listEach * 0.005) flags.push({ok: false, msg: `PO price ${gbp(poEach)} each vs price list ${gbp(listEach)}`});
+    if (it.stated != null && Math.abs(it.stated - it.qty * it.price) > 0.01) flags.push({ok: false, msg: `Line total on PO (${gbp(it.stated)}) doesn't equal qty × price`});
+    const status = flags.some(f => !f.ok) ? 'warn' : 'ok';
+    return {n: i + 1, it, code, qtyEach, listEach, total: qtyEach * listEach, status, flags: flags.map(f => f.msg)};
+  });
+  return out;
+}
+
+function render(doc, lines, ms) {
+  const cust = CUSTOMERS[doc.customer];
+  const rows = check(doc);
+  const issues = rows.filter(r => r.status !== 'ok').length;
+  const total = rows.reduce((s, r) => s + (r.total || 0), 0);
+  const docCheck = doc.docTotal != null ? (Math.abs(doc.docTotal - doc.items.reduce((s, i) => s + i.qty * i.price, 0)) < 0.01 ? 'PO total adds up' : 'PO total does not add up') : null;
+  const body = rows.map(r => `<tr>
+      <td>${r.n}</td>
+      <td class="item"><code>${esc(r.it.ref)}</code>${r.code && r.code !== r.it.ref ? ` → <code>${r.code}</code>` : ''}<span class="why">${esc(r.code ? CATALOG[r.code].desc : r.it.text)}</span></td>
+      <td class="num">${r.code ? r.qtyEach : r.it.qty}</td>
+      <td class="num">${r.code ? gbp(r.listEach) : '–'}</td>
+      <td class="num">${r.code ? gbp(r.total) : '–'}</td>
+      <td><span class="tag ${r.status}">${r.status === 'ok' ? 'OK' : r.status === 'warn' ? 'Check' : 'Hold'}</span>${r.flags.map(f => `<span class="why">${esc(f)}</span>`).join('')}</td>
+    </tr>`).join('');
+  document.getElementById('draft').innerHTML = `
+    <dl class="meta">
+      <dt>Customer</dt><dd>${esc(cust.name)} <span class="why" style="display:inline">· account ${cust.account}</span></dd>
+      <dt>Their PO</dt><dd>${esc(doc.po)}</dd>
+      <dt>PO date</dt><dd>${esc(doc.date)}</dd>
+    </dl>
+    <div class="summary">
+      <span class="tag ${issues ? 'warn' : 'ok'}">${issues ? issues + (issues > 1 ? ' lines need' : ' line needs') + ' a look' : 'All lines checked'}</span>
+      ${docCheck ? `<span class="tag ${/not/.test(docCheck) ? 'bad' : 'ok'}">${docCheck}</span>` : ''}
+      <span class="why" style="display:inline">Read and checked in ${ms} ms</span>
+    </div>
+    <div class="hscroll"><table>
+      <thead><tr><th>#</th><th>Item</th><th class="num">Qty (each)</th><th class="num">List price</th><th class="num">Line</th><th>Status</th></tr></thead>
+      <tbody>${body}</tbody>
+      <tfoot><tr><td></td><td><b>Draft order value</b></td><td></td><td></td><td class="num"><b>${gbp(total)}</b></td><td></td></tr></tfoot>
+    </table></div>
+    <div class="actions">
+      <button class="btn" id="approve">Approve draft</button>
+      <button class="btn ghost" id="csv">Download import file (CSV)</button>
+    </div>
+    <div class="toast" id="toast"></div>`;
+  document.getElementById('approve').onclick = () => {
+    const t = document.getElementById('toast');
+    t.style.display = 'block';
+    t.textContent = issues
+      ? `Draft saved with ${issues} flagged line${issues > 1 ? 's' : ''} for follow-up. In a live setup it is created as a draft sales order in the accounts system, with the flags attached as notes.`
+      : 'Approved. In a live setup this is now a sales order in the accounts system, linked to the original PDF.';
+  };
+  document.getElementById('csv').onclick = () => {
+    const head = 'AccountRef,CustomerOrderNo,LineNo,ProductCode,Qty,UnitPrice,Status,Note';
+    const csv = [head, ...rows.map(r => [cust.account, doc.po, r.n, r.code || r.it.ref, r.code ? r.qtyEach : r.it.qty, r.code ? r.listEach.toFixed(2) : '', r.status.toUpperCase(), '"' + r.flags.join('; ').replace(/"/g, "'") + '"'].join(','))].join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'}));
+    a.download = `draft-order-${doc.po.replace(/\W+/g, '-')}.csv`;
+    a.click();
+  };
+}
+
+async function open(sample, btn) {
+  document.querySelectorAll('.inbox button').forEach(b => b.setAttribute('aria-pressed', b === btn));
+  const res = document.getElementById('result');
+  res.innerHTML = `<div class="pane"><div><h2>Original PDF</h2><canvas id="pdf"></canvas><p class="note"><a href="samples/${sample.file}" target="_blank" rel="noopener">Open PDF</a></p></div><div><h2>Draft sales order</h2><div id="draft"><p class="empty">Reading…</p></div></div></div>`;
+  try {
+    const t0 = performance.now();
+    const lines = await readPdf('samples/' + sample.file, document.getElementById('pdf'));
+    const doc = parse(lines);
+    if (!doc) { document.getElementById('draft').innerHTML = '<p class="empty">New layout. This customer needs a one-time setup.</p>'; return; }
+    render(doc, lines, Math.max(1, Math.round(performance.now() - t0)));
+  } catch (e) {
+    document.getElementById('draft').innerHTML = '<p class="empty">Could not load the sample. Please refresh.</p>';
+  }
+}
+
+const inbox = document.getElementById('inbox');
+SAMPLES.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = `${esc(s.label)}<small>${esc(s.sub)}</small>`;
+  b.onclick = () => open(s, b);
+  inbox.appendChild(b);
+  if (i === 0) setTimeout(() => open(s, b), 0);
+});
+</script>
+</body>
+</html>
