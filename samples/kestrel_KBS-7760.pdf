@@ -1,0 +1,59 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1073 >>
+stream
+BT /F2 18 Tf 40 795 Td (Kestrel Building Services) Tj ET
+BT /F1 9 Tf 40 778 Td (Mechanical & Electrical Contractors - Leeds) Tj ET
+BT /F2 13 Tf 40 745 Td (ORDER) Tj ET
+BT /F1 10 Tf 40 728 Td (Order Ref    KBS/7760) Tj ET
+BT /F1 10 Tf 40 714 Td (Order Date   14 Nov 2026) Tj ET
+BT /F1 10 Tf 300 728 Td (Site: Chapel Allerton offices) Tj ET
+BT /F1 10 Tf 300 714 Td (Account: KES-0042) Tj ET
+BT /F2 9 Tf 40 680 Td (Item No) Tj ET
+BT /F2 9 Tf 120 680 Td (Qty) Tj ET
+BT /F2 9 Tf 160 680 Td (UOM) Tj ET
+BT /F2 9 Tf 210 680 Td (Desc) Tj ET
+BT /F2 9 Tf 470 680 Td (Price ea) Tj ET
+0.6 w 40 674 m 555 674 l S
+BT /F1 9 Tf 40 662 Td (K-1102) Tj ET
+BT /F1 9 Tf 120 662 Td (1) Tj ET
+BT /F1 9 Tf 160 662 Td (BOX10) Tj ET
+BT /F1 9 Tf 210 662 Td (LED downlight 6W fire rated) Tj ET
+BT /F1 9 Tf 470 662 Td (£84.00) Tj ET
+BT /F1 9 Tf 40 644 Td (K-3001) Tj ET
+BT /F1 9 Tf 120 644 Td (4) Tj ET
+BT /F1 9 Tf 160 644 Td (EACH) Tj ET
+BT /F1 9 Tf 210 644 Td (Isolator switch 3-pole) Tj ET
+BT /F1 9 Tf 470 644 Td (£24.75) Tj ET
+BT /F1 9 Tf 40 604 Td (Authorised by: Purchasing Dept \(sample\)) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000001376 00000 n 
+0000001473 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+1575
+%%EOF
