@@ -3,55 +3,82 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Order Inbox Demo</title>
-<meta name="description" content="Customer purchase orders in, checked draft sales orders out. Live demo with sample documents.">
-<meta property="og:title" content="Order Inbox Demo">
+<title>PhantomClerk Order Inbox</title>
+<meta name="description" content="Customer purchase orders in, checked draft sales orders out. Prices, part numbers, units, duplicates and revisions are checked before anything reaches your accounts system.">
+<meta property="og:title" content="PhantomClerk Order Inbox">
 <meta property="og:description" content="Customer purchase orders in, checked draft sales orders out. Live demo with sample documents.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f5c4a'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h8' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
-:root{--bg:#f6f5f1;--card:#fff;--ink:#1d2321;--muted:#5e6964;--line:#e2e0d9;--accent:#1f5c4a;--accent-ink:#fff;--ok:#1f7a4d;--ok-bg:#e5f3ea;--warn:#a5520c;--warn-bg:#fcefdf;--bad:#b42318;--bad-bg:#fde8e6;--code:#f0efe9}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141816;--card:#1c211f;--ink:#e8ece9;--muted:#9aa5a0;--line:#2e3532;--accent:#5fbf9a;--accent-ink:#0d1210;--ok:#6fd39f;--ok-bg:#183326;--warn:#f0a75a;--warn-bg:#3a2a17;--bad:#ff8a7e;--bad-bg:#3d1d1a;--code:#252b28}}
-:root[data-theme="dark"]{--bg:#141816;--card:#1c211f;--ink:#e8ece9;--muted:#9aa5a0;--line:#2e3532;--accent:#5fbf9a;--accent-ink:#0d1210;--ok:#6fd39f;--ok-bg:#183326;--warn:#f0a75a;--warn-bg:#3a2a17;--bad:#ff8a7e;--bad-bg:#3d1d1a;--code:#252b28}
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1d2321;--muted:#5e6964;--line:#e2e0d9;--accent:#1f5c4a;--accent-ink:#fff;--ok:#1f7a4d;--ok-bg:#e5f3ea;--warn:#a5520c;--warn-bg:#fcefdf;--bad:#b42318;--bad-bg:#fde8e6;--info:#2a5aa8;--info-bg:#e6eefb;--code:#f0efe9;--hl:rgba(255,196,0,.38)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141816;--card:#1c211f;--ink:#e8ece9;--muted:#9aa5a0;--line:#2e3532;--accent:#5fbf9a;--accent-ink:#0d1210;--ok:#6fd39f;--ok-bg:#183326;--warn:#f0a75a;--warn-bg:#3a2a17;--bad:#ff8a7e;--bad-bg:#3d1d1a;--info:#8fb4ff;--info-bg:#1b2840;--code:#252b28}}
+:root[data-theme="dark"]{--bg:#141816;--card:#1c211f;--ink:#e8ece9;--muted:#9aa5a0;--line:#2e3532;--accent:#5fbf9a;--accent-ink:#0d1210;--ok:#6fd39f;--ok-bg:#183326;--warn:#f0a75a;--warn-bg:#3a2a17;--bad:#ff8a7e;--bad-bg:#3d1d1a;--info:#8fb4ff;--info-bg:#1b2840;--code:#252b28}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:1240px;margin:0 auto;padding:28px 16px 48px}
+.wrap{max-width:1280px;margin:0 auto;padding:28px 16px 48px}
 header h1{font-size:28px;margin:0 0 6px;letter-spacing:-.01em}
-header p{margin:0;color:var(--muted);max-width:720px}
-.steps{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px;padding:0;list-style:none}
-.steps li{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--muted)}
-.steps b{color:var(--ink)}
-.grid{display:grid;grid-template-columns:240px 1fr;gap:18px}
-@media (max-width:860px){.grid{grid-template-columns:1fr}}
+header p{margin:0;color:var(--muted);max-width:780px}
+.brand{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.overview{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:150px}
+.stat b{display:block;font-size:22px;line-height:1.2}
+.stat span{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-.card h2{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px}
-.inbox button{display:block;width:100%;text-align:left;background:none;border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin:0 0 8px;color:var(--ink);cursor:pointer;font:inherit}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px}
+.inbox button{display:block;width:100%;text-align:left;background:none;border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin:0 0 8px;color:var(--ink);cursor:pointer;font:inherit}
 .inbox button:hover{border-color:var(--accent)}
 .inbox button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
+.inbox .row1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .inbox small{display:block;color:var(--muted);font-size:12px}
-.pane{display:grid;grid-template-columns:minmax(200px,300px) minmax(0,1fr);gap:18px}
-@media (max-width:1000px){.pane{grid-template-columns:1fr}.pane canvas{max-width:420px}}
-td.item{min-width:190px}
-canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
-.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px;margin-bottom:12px}
+.time{color:var(--muted);font-size:12px;white-space:nowrap}
+.pane{display:grid;grid-template-columns:minmax(220px,330px) minmax(0,1fr);gap:18px}
+@media (max-width:1050px){.pane{grid-template-columns:1fr}.pdfbox{max-width:440px}}
+.pdfbox{position:relative}
+#hls{position:absolute;inset:0;pointer-events:none}
+canvas{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.hl{position:absolute;background:var(--hl);border-radius:3px;pointer-events:none;transition:opacity .15s}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:14px;margin-bottom:10px}
 .meta dt{color:var(--muted)}
 .meta dd{margin:0;font-weight:600}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
 td.num,th.num{text-align:right;white-space:nowrap}
+td.item{min-width:180px}
+tbody tr{cursor:default}
+tbody tr:hover,tbody tr:focus-within{background:color-mix(in srgb,var(--accent) 7%,transparent)}
 code{background:var(--code);padding:1px 5px;border-radius:5px;font-size:12.5px}
-.tag{display:inline-block;border-radius:6px;padding:2px 7px;font-size:12px;font-weight:600}
-.tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.warn{background:var(--warn-bg);color:var(--warn)}.tag.bad{background:var(--bad-bg);color:var(--bad)}
+.tag{display:inline-block;border-radius:6px;padding:2px 7px;font-size:12px;font-weight:600;white-space:nowrap}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.warn{background:var(--warn-bg);color:var(--warn)}.tag.bad{background:var(--bad-bg);color:var(--bad)}.tag.info{background:var(--info-bg);color:var(--info)}
 .why{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
-.summary{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.decisions{display:grid;gap:10px;margin:12px 0}
+.decision{border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:9px;padding:10px 12px}
+.decision.bad{border-left-color:var(--bad)}.decision.info{border-left-color:var(--info)}.decision.done{border-left-color:var(--ok);opacity:.85}
+.decision h3{margin:0 0 4px;font-size:14px}
+.decision p{margin:0 0 8px;font-size:13.5px;color:var(--muted)}
+.choices{display:flex;gap:6px;flex-wrap:wrap}
+.choice{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.choice:hover{border-color:var(--accent)}
+.choice[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
 .btn{border:0;border-radius:9px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
 .btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
-.note{font-size:13px;color:var(--muted);margin-top:10px}
-.toast{margin-top:10px;padding:10px 12px;border-radius:9px;background:var(--ok-bg);color:var(--ok);font-size:13.5px;display:none}
+.note{font-size:13px;color:var(--muted)}
+.result{margin-top:14px;border:1px solid var(--line);border-radius:10px;padding:12px;background:color-mix(in srgb,var(--ok-bg) 60%,var(--card))}
+.result.neutral{background:color-mix(in srgb,var(--info-bg) 60%,var(--card))}
+.result h3{margin:0 0 6px;font-size:15px}
+.mail{white-space:pre-wrap;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--code);border-radius:8px;padding:10px 12px;margin:8px 0}
+.audit{list-style:none;margin:8px 0 0;padding:0;font-size:13px}
+.audit li{display:grid;grid-template-columns:52px 1fr;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.audit li span{color:var(--muted);font-variant-numeric:tabular-nums}
+details summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:13.5px;margin-top:12px}
+.diff del{color:var(--bad)}.diff ins{color:var(--ok);text-decoration:none;font-weight:600}
 .empty{color:var(--muted);padding:40px 0;text-align:center}
 .hscroll{overflow-x:auto}
 footer{margin-top:28px;color:var(--muted);font-size:13px}
+footer a{color:inherit}
 .cta{margin-top:18px;padding:14px 16px;border-radius:12px;border:1px dashed var(--accent)}
 .cta b{color:var(--accent)}
 </style>
@@ -59,12 +86,12 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <body>
 <div class="wrap">
   <header>
+    <div class="brand">PhantomClerk</div>
     <h1>Order inbox demo</h1>
-    <p>Customer purchase orders arrive in three different layouts. Each one is read, matched to the supplier's own product codes, checked against the agreed price list, and turned into a draft sales order. Nothing is posted without a person approving it. Anything unusual is flagged with the reason.</p>
+    <p>Nine customer emails from one morning, in three different layouts. Each purchase order is read, matched to the supplier's own product codes and agreed prices, checked for duplicates and revisions, and turned into a draft sales order. Anything unusual becomes a clear decision for a person. Nothing reaches the accounts system without approval.</p>
   </header>
-  <ol class="steps">
-    <li><b>1</b> PO arrives by email</li><li><b>2</b> Fields read from the PDF</li><li><b>3</b> Codes, units and prices checked</li><li><b>4</b> Draft order for review</li><li><b>5</b> Approved order goes into the accounts system</li>
-  </ol>
+
+  <div class="overview" id="overview" aria-live="polite"><div class="stat"><b>…</b><span>Reading the inbox</span></div></div>
 
   <div class="grid">
     <section class="card inbox" aria-label="Sample inbox">
@@ -72,16 +99,16 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
       <div id="inbox"></div>
       <p class="note">Brightwell Trade Supplies and its customers are fictional. All documents are samples.</p>
     </section>
-
     <section class="card" aria-live="polite">
-      <div id="result"><p class="empty">Pick a purchase order from the inbox.</p></div>
+      <div id="result"><p class="empty">Reading the inbox…</p></div>
     </section>
   </div>
 
   <div class="cta">Want to see this on <b>your own purchase orders</b>? Ask for a free accuracy test on 20 recent POs (redacted is fine) by replying to the email that brought you here.</div>
 
   <footer>
-    In a live setup the approved draft is created directly in the supplier's system (for example Sage 200, QuickBooks Online, MYOB, Business Central, Unleashed or Cin7), or exported as an import file. Each new customer layout is a one-time setup. Fictional businesses and sample documents. · PhantomClerk · <a href="mailto:zi@phantomclerk.com" style="color:inherit">zi@phantomclerk.com</a> · <a href="privacy.html" style="color:inherit">Privacy</a>
+    In a live setup the approved draft is created in the supplier's own system: Sage 50 or 200, Business Central, MYOB, Unleashed or Cin7 as a sales order, QuickBooks Online as an estimate, or as an import file. Customer emails are drafted for a person to send; nothing is sent automatically. Each new customer layout is a one-time setup. Fictional businesses and sample documents.
+    · PhantomClerk · <a href="mailto:zi@phantomclerk.com">zi@phantomclerk.com</a> · <a href="privacy.html">Privacy</a>
   </footer>
 </div>
 
@@ -89,6 +116,8 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+const SUPPLIER = 'Brightwell Trade Supplies';
+const SYSTEM = 'Sage 50';
 const CATALOG = {
   'BW-CBL-T25': {desc: 'Twin & Earth cable 2.5mm, 100m drum', price: 96.40},
   'BW-CBL-T15': {desc: 'Twin & Earth cable 1.5mm, 100m drum', price: 71.90},
@@ -98,173 +127,357 @@ const CATALOG = {
   'BW-RCD-63': {desc: 'RCD 63A 30mA', price: 29.50},
   'BW-LED-6FR': {desc: 'LED downlight 6W fire rated', price: 8.40},
   'BW-CU15-3M': {desc: 'Copper pipe 15mm x 3m', price: 12.10},
-  'BW-PF-ELB15': {desc: 'Push-fit elbow 15mm', price: 1.05}
+  'BW-PF-ELB15': {desc: 'Push-fit elbow 15mm', price: 1.05},
+  'BW-ISO-3P': {desc: 'Isolator switch 3-pole 32A', price: 24.75},
+  'BW-TRK-GRY': {desc: 'Mini trunking grey, 3m length', price: 4.20}
 };
 const CUSTOMERS = {
-  harbour: {name: 'Harbour Electrical Ltd', account: 'HAR001'},
-  kestrel: {name: 'Kestrel Building Services', account: 'KES0042', map: {'K-1102': 'BW-LED-6FR', 'K-2210': 'BW-CU15-3M', 'K-0450': 'BW-PF-ELB15'}},
-  moorside: {name: 'Moorside Facilities Ltd', account: 'MOO010'}
+  harbour: {name: 'Harbour Electrical Ltd', account: 'HAR001', email: 'purchasing@harbour-electrical.example'},
+  kestrel: {name: 'Kestrel Building Services', account: 'KES0042', email: 'orders@kestrel-bs.example',
+    map: {'K-1102': 'BW-LED-6FR', 'K-2210': 'BW-CU15-3M', 'K-0450': 'BW-PF-ELB15'},
+    credit: {limit: 5000, balance: 4700}},
+  moorside: {name: 'Moorside Facilities Ltd', account: 'MOO010', email: 'buying@moorside-fm.example',
+    usual: {'grey trunking': 'BW-TRK-GRY'}}
 };
 const PACKS = {EACH: 1, BOX10: 10, BOX50: 50};
 const SAMPLES = [
-  {file: 'harbour_HE-24817.pdf', label: 'Harbour Electrical', sub: 'PO HE-24817 · table layout'},
-  {file: 'harbour_HE-24903.pdf', label: 'Harbour Electrical', sub: 'PO HE-24903 · table layout'},
-  {file: 'kestrel_KBS-7731.pdf', label: 'Kestrel Building Services', sub: 'Their own item numbers, boxes'},
-  {file: 'kestrel_KBS-7760.pdf', label: 'Kestrel Building Services', sub: 'Their own item numbers'},
-  {file: 'moorside_MF-0391.pdf', label: 'Moorside Facilities', sub: 'Written as a letter'},
-  {file: 'moorside_MF-0394.pdf', label: 'Moorside Facilities', sub: 'Written as a letter'}
+  {file: 'harbour_HE-24817.pdf', time: '07:52', from: 'Harbour Electrical', sub: 'PO HE-24817'},
+  {file: 'harbour_HE-24903.pdf', time: '08:05', from: 'Harbour Electrical', sub: 'PO HE-24903'},
+  {file: 'kestrel_KBS-7731.pdf', time: '08:11', from: 'Kestrel Building Services', sub: 'Order KBS/7731'},
+  {file: 'kestrel_KBS-7760.pdf', time: '08:26', from: 'Kestrel Building Services', sub: 'Order KBS/7760'},
+  {file: 'moorside_MF-0391.pdf', time: '08:40', from: 'Moorside Facilities', sub: 'PO MF-0391'},
+  {file: 'moorside_MF-0394.pdf', time: '08:58', from: 'Moorside Facilities', sub: 'PO MF-0394'},
+  {file: 'harbour_HE-24817_resend.pdf', time: '09:13', from: 'Harbour Electrical', sub: 'PO HE-24817 (sent again)'},
+  {file: 'harbour_HE-24903_rev2.pdf', time: '09:31', from: 'Harbour Electrical', sub: 'PO HE-24903 revised'},
+  {file: 'moorside_MF-0399.pdf', time: '09:47', from: 'Moorside Facilities', sub: 'PO MF-0399'}
 ];
 
 const gbp = v => '£' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const num = s => parseFloat(String(s).replace(/[£,\s]/g, ''));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const words = s => String(s).toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 1);
+const plus = (t, m) => { const [h, mm] = t.split(':').map(Number); const x = h * 60 + mm + m; return String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(x % 60).padStart(2, '0'); };
+let soNext = 10481;
 
-async function readPdf(url, canvas) {
+/* ---------- reading ---------- */
+async function readPdf(url) {
   const pdf = await pdfjsLib.getDocument(url).promise;
   const page = await pdf.getPage(1);
-  const vp = page.getViewport({scale: 1.6});
-  canvas.width = vp.width; canvas.height = vp.height;
-  await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise;
   const tc = await page.getTextContent();
   const rows = new Map();
   for (const it of tc.items) {
     if (!it.str.trim()) continue;
     const y = Math.round(it.transform[5]);
     if (!rows.has(y)) rows.set(y, []);
-    rows.get(y).push({x: it.transform[4], s: it.str.trim()});
+    rows.get(y).push({x: it.transform[4], y: it.transform[5], w: it.width, h: it.height || 10, s: it.str.trim()});
   }
-  return [...rows.entries()].sort((a, b) => b[0] - a[0]).map(([, segs]) => segs.sort((a, b) => a.x - b.x));
+  const lines = [...rows.entries()].sort((a, b) => b[0] - a[0]).map(([, segs]) => segs.sort((a, b) => a.x - b.x));
+  return {page, lines};
 }
 
 function parse(lines) {
   const text = lines.map(l => l.map(s => s.s).join(' '));
   const all = text.join('\n');
+  const field = re => { for (const l of lines) { const t = l.map(s => s.s).join(' '); const m = t.match(re); if (m) return {v: m[1].trim(), segs: l}; } return {v: null, segs: []}; };
   if (/HARBOUR ELECTRICAL/.test(all)) {
-    const po = (all.match(/PO No:\s*(\S+)/) || [])[1];
-    const date = (all.match(/Date:\s*(\S+)/) || [])[1];
     const items = [];
-    let docTotal = null;
-    for (const l of lines) {
-      if (l.length >= 6 && /^\d+$/.test(l[0].s)) items.push({ref: l[1].s, text: l[2].s, qty: num(l[3].s), price: num(l[4].s), stated: num(l[5].s), unit: 'EACH'});
-      if (l[0].s === 'Order Total:') docTotal = num(l[1].s);
-    }
-    return {customer: 'harbour', po, date, items, docTotal};
+    for (const l of lines) if (l.length >= 6 && /^\d+$/.test(l[0].s)) items.push({ref: l[1].s, text: l[2].s, qty: num(l[3].s), price: num(l[4].s), stated: num(l[5].s), unit: 'EACH', segs: l});
+    return {customer: 'harbour', po: field(/PO No:\s*(\S+)/), date: field(/Date:\s*(\S+)/), deliver: field(/Deliver to:\s*(.+)/), note: field(/^(RESENT.*|REVISED.*)$/), items};
   }
   if (/Kestrel Building Services/.test(all)) {
-    const po = (all.match(/Order Ref\s+(\S+)/) || [])[1];
-    const date = (all.match(/Order Date\s+(.+)/) || [])[1];
-    const items = lines.filter(l => l.length >= 5 && /^K-\d+/.test(l[0].s))
-      .map(l => ({ref: l[0].s, qty: num(l[1].s), unit: l[2].s, text: l[3].s, price: num(l[4].s)}));
-    return {customer: 'kestrel', po, date, items};
+    const items = lines.filter(l => l.length >= 5 && /^K-\d+/.test(l[0].s)).map(l => ({ref: l[0].s, qty: num(l[1].s), unit: l[2].s, text: l[3].s, price: num(l[4].s), segs: l}));
+    return {customer: 'kestrel', po: field(/Order Ref\s+(\S+)/), date: field(/Order Date\s+(\d{1,2} \w{3} \d{4})/), deliver: field(/Site:\s*(.+)/), note: {v: null, segs: []}, items};
   }
   if (/Moorside Facilities/.test(all)) {
-    const m = all.match(/Purchase order (\S+) - raised (.+)/) || [];
     const items = [];
-    for (const t of text) {
-      const r = t.match(/^(\d+) x (\S+)\s+(.+?)\s+@ £([\d.,]+)/);
-      if (r) items.push({ref: r[2], qty: +r[1], text: r[3], price: num(r[4]), unit: 'EACH'});
+    for (const l of lines) {
+      const t = l.map(s => s.s).join(' ');
+      let r = t.match(/^(\d+) x (BW-\S+)\s+(.+?)\s+@ £([\d.,]+)/);
+      if (r) { items.push({ref: r[2], qty: +r[1], text: r[3], price: num(r[4]), unit: 'EACH', segs: l}); continue; }
+      r = t.match(/^(\d+) x (.+)$/);
+      if (r) items.push({ref: null, qty: +r[1], text: r[2], price: null, unit: 'EACH', segs: l});
     }
-    return {customer: 'moorside', po: m[1], date: m[2], items};
+    const closing = field(/(Deliver to .+|deliver whenever .+)/i);
+    return {customer: 'moorside', po: field(/Purchase order (\S+) - raised/), date: field(/raised (.+)$/), deliver: {v: /whenever/i.test(closing.v || '') ? null : 'Halifax depot (usual)', segs: closing.segs}, noDate: /whenever/i.test(closing.v || ''), note: {v: null, segs: []}, items};
   }
   return null;
 }
 
-function check(doc) {
-  const cust = CUSTOMERS[doc.customer];
-  const out = doc.items.map((it, i) => {
-    const code = (cust.map && cust.map[it.ref]) || (CATALOG[it.ref] ? it.ref : null);
-    const flags = [];
-    if (!code) return {n: i + 1, it, code: null, status: 'bad', flags: [`Customer code ${it.ref} has no match in the product list. Needs a one-time mapping.`]};
-    const pack = PACKS[it.unit] || 1;
-    const qtyEach = it.qty * pack;
-    const listEach = CATALOG[code].price;
-    const poEach = it.price / pack;
-    if (pack > 1) flags.push({ok: true, msg: `${it.qty} × ${it.unit} converted to ${qtyEach} each`});
-    if (cust.map && cust.map[it.ref]) flags.push({ok: true, msg: `${it.ref} matched to ${code}`});
-    if (Math.abs(poEach - listEach) > listEach * 0.005) flags.push({ok: false, msg: `PO price ${gbp(poEach)} each vs price list ${gbp(listEach)}`});
-    if (it.stated != null && Math.abs(it.stated - it.qty * it.price) > 0.01) flags.push({ok: false, msg: `Line total on PO (${gbp(it.stated)}) doesn't equal qty × price`});
-    const status = flags.some(f => !f.ok) ? 'warn' : 'ok';
-    return {n: i + 1, it, code, qtyEach, listEach, total: qtyEach * listEach, status, flags: flags.map(f => f.msg)};
-  });
-  return out;
+/* ---------- checking ---------- */
+function suggest(cust, text, price) {
+  if (cust.usual) for (const k in cust.usual) if (String(text).toLowerCase().includes(k)) return {code: cust.usual[k], basis: `${cust.name.split(' ')[0]}'s previous orders use this item`};
+  let best = null;
+  for (const code in CATALOG) {
+    const a = new Set(words(text)), b = words(CATALOG[code].desc);
+    let score = b.filter(w => a.has(w)).length;
+    if (price != null && Math.abs(CATALOG[code].price - price) < 0.01) score += 2;
+    if (!best || score > best.score) best = {code, score};
+  }
+  return best && best.score >= 2 ? {code: best.code, basis: 'Description words' + (price != null && Math.abs(CATALOG[best.code].price - price) < 0.01 ? ' and price' : '') + ' match'} : null;
 }
 
-function render(doc, lines, ms) {
+function analyse(doc, history, sample) {
   const cust = CUSTOMERS[doc.customer];
-  const rows = check(doc);
-  const issues = rows.filter(r => r.status !== 'ok').length;
-  const total = rows.reduce((s, r) => s + (r.total || 0), 0);
-  const docCheck = doc.docTotal != null ? (Math.abs(doc.docTotal - doc.items.reduce((s, i) => s + i.qty * i.price, 0)) < 0.01 ? 'PO total adds up' : 'PO total does not add up') : null;
-  const body = rows.map(r => `<tr>
-      <td>${r.n}</td>
-      <td class="item"><code>${esc(r.it.ref)}</code>${r.code && r.code !== r.it.ref ? ` → <code>${r.code}</code>` : ''}<span class="why">${esc(r.code ? CATALOG[r.code].desc : r.it.text)}</span></td>
-      <td class="num">${r.code ? r.qtyEach : r.it.qty}</td>
-      <td class="num">${r.code ? gbp(r.listEach) : '–'}</td>
-      <td class="num">${r.code ? gbp(r.total) : '–'}</td>
-      <td><span class="tag ${r.status}">${r.status === 'ok' ? 'OK' : r.status === 'warn' ? 'Check' : 'Hold'}</span>${r.flags.map(f => `<span class="why">${esc(f)}</span>`).join('')}</td>
-    </tr>`).join('');
-  document.getElementById('draft').innerHTML = `
-    <dl class="meta">
-      <dt>Customer</dt><dd>${esc(cust.name)} <span class="why" style="display:inline">· account ${cust.account}</span></dd>
-      <dt>Their PO</dt><dd>${esc(doc.po)}</dd>
-      <dt>PO date</dt><dd>${esc(doc.date)}</dd>
-    </dl>
-    <div class="summary">
-      <span class="tag ${issues ? 'warn' : 'ok'}">${issues ? issues + (issues > 1 ? ' lines need' : ' line needs') + ' a look' : 'All lines checked'}</span>
-      ${docCheck ? `<span class="tag ${/not/.test(docCheck) ? 'bad' : 'ok'}">${docCheck}</span>` : ''}
-      <span class="why" style="display:inline">Read and checked in ${ms} ms</span>
-    </div>
-    <div class="hscroll"><table>
-      <thead><tr><th>#</th><th>Item</th><th class="num">Qty (each)</th><th class="num">List price</th><th class="num">Line</th><th>Status</th></tr></thead>
-      <tbody>${body}</tbody>
-      <tfoot><tr><td></td><td><b>Draft order value</b></td><td></td><td></td><td class="num"><b>${gbp(total)}</b></td><td></td></tr></tfoot>
-    </table></div>
-    <div class="actions">
-      <button class="btn" id="approve">Approve draft</button>
-      <button class="btn ghost" id="csv">Download import file (CSV)</button>
-    </div>
-    <div class="toast" id="toast"></div>`;
-  document.getElementById('approve').onclick = () => {
-    const t = document.getElementById('toast');
-    t.style.display = 'block';
-    t.textContent = issues
-      ? `Draft saved with ${issues} flagged line${issues > 1 ? 's' : ''} for follow-up. In a live setup it is created as a draft sales order in the accounts system, with the flags attached as notes.`
-      : 'Approved. In a live setup this is now a sales order in the accounts system, linked to the original PDF.';
+  const po = doc.po.v;
+  const base = po.replace(/-R\d+$/, '');
+  const sameLines = (a, b) => a.items.length === b.items.length && a.items.every((x, i) => x.ref === b.items[i].ref && x.qty === b.items[i].qty);
+  const earlier = history.filter(h => h.doc.customer === doc.customer && h.doc.po.v.replace(/-R\d+$/, '') === base);
+  const r = {doc, sample, cust, issues: [], lines: [], kind: 'order', log: []};
+  r.log.push([sample.time, `Email received from ${cust.email} with 1 PDF`]);
+  r.log.push([plus(sample.time, 1), `PDF read: ${doc.items.length} lines, PO ${po}, dated ${doc.date.v}`]);
+  r.log.push([plus(sample.time, 1), `Customer identified: ${cust.name} (account ${cust.account}) from sender and PO header`]);
+
+  const dup = earlier.find(h => h.doc.po.v === po && sameLines(h.doc, doc));
+  if (dup) {
+    r.kind = 'dup'; r.original = dup;
+    r.log.push([plus(sample.time, 1), `Duplicate: same PO number and lines as the email at ${dup.sample.time}. No new order created`]);
+    return r;
+  }
+  const prev = /-R\d+$/.test(po) ? earlier.find(h => h.doc.po.v === base) : null;
+  if (prev) {
+    r.kind = 'rev'; r.original = prev;
+    r.diff = doc.items.map(it => { const o = prev.doc.items.find(x => x.ref === it.ref); return {it, o, changed: !o || o.qty !== it.qty || o.price !== it.price}; });
+    r.log.push([plus(sample.time, 1), `Revision of PO ${base}: ${r.diff.filter(d => d.changed).length} line(s) changed. Suggest updating the existing draft, not a new order`]);
+  }
+
+  doc.items.forEach((it, i) => {
+    const mapped = (cust.map && cust.map[it.ref]) || (CATALOG[it.ref] ? it.ref : null);
+    const L = {n: i + 1, it, code: mapped, notes: [], status: 'ok'};
+    const pack = PACKS[it.unit] || 1;
+    if (!mapped) {
+      const s = suggest(cust, it.text, it.price);
+      L.status = 'bad';
+      r.issues.push({type: 'map', line: L, suggestion: s, choice: null});
+    } else {
+      if (cust.map && cust.map[it.ref]) L.notes.push(`Customer code ${it.ref} → ${mapped} (saved mapping for ${cust.name.split(' ')[0]})`);
+    }
+    L.qtyEach = it.qty * pack;
+    if (pack > 1) L.notes.push(`${it.qty} × ${it.unit} = ${L.qtyEach} each`);
+    if (mapped) {
+      L.agreed = CATALOG[mapped].price;
+      if (it.price != null) {
+        const poEach = it.price / pack;
+        if (Math.abs(poEach - L.agreed) > L.agreed * 0.005) {
+          L.status = 'warn';
+          r.issues.push({type: 'price', line: L, poEach, choice: null});
+        }
+      }
+    }
+    if (it.stated != null && Math.abs(it.stated - it.qty * it.price) > 0.01) L.notes.push('Line total on the PO does not equal qty × price');
+    r.lines.push(L);
+  });
+  if (doc.noDate) r.issues.push({type: 'date', choice: null});
+  if (cust.credit) {
+    const total = r.lines.reduce((s, L) => s + (L.agreed || 0) * L.qtyEach, 0);
+    if (cust.credit.balance + total > cust.credit.limit) r.issues.push({type: 'credit', total, choice: null});
+  }
+  r.log.push([plus(sample.time, 1), r.issues.length ? `Checks finished: ${r.issues.length} decision(s) for a person` : 'Checks finished: codes, units and prices all match']);
+  return r;
+}
+
+const statusOf = r => r.kind === 'dup' ? ['info', 'Duplicate stopped'] : r.kind === 'rev' ? ['info', 'Revision'] : r.approved ? ['ok', 'Approved'] : r.issues.some(x => x.type === 'map' || x.type === 'date') ? ['bad', 'Needs you'] : r.issues.length ? ['warn', 'Check'] : ['ok', 'Ready'];
+
+/* ---------- rendering ---------- */
+const results = [];
+let current = null;
+
+function renderOverview() {
+  const ready = results.filter(r => r.kind === 'order' && !r.issues.length).length;
+  const decide = results.filter(r => r.kind === 'order' && r.issues.length).length;
+  const dupes = results.filter(r => r.kind === 'dup').length;
+  const revs = results.filter(r => r.kind === 'rev').length;
+  const linesRead = results.reduce((s, r) => s + r.doc.items.length, 0);
+  document.getElementById('overview').innerHTML = [
+    [results.length, 'emails with POs this morning'], [linesRead, 'order lines read'], [ready, 'ready to approve as they are'],
+    [decide, 'need a decision from you'], [dupes + revs, 'duplicates or revisions caught']
+  ].map(([n, t]) => `<div class="stat"><b>${n}</b><span>${t}</span></div>`).join('');
+}
+
+function renderInbox() {
+  document.getElementById('inbox').innerHTML = results.map((r, i) => {
+    const [cls, label] = statusOf(r);
+    return `<button aria-pressed="${current === r}" data-i="${i}"><div class="row1"><span>${esc(r.sample.from)}</span><span class="time">${r.sample.time}</span></div><small>${esc(r.sample.sub)}</small><span class="tag ${cls}" style="margin-top:4px">${label}</span></button>`;
+  }).join('');
+  document.querySelectorAll('#inbox button').forEach(b => b.onclick = () => open(results[+b.dataset.i]));
+}
+
+async function drawPdf(r) {
+  const vp = r.page.getViewport({scale: 1.6});
+  const canvas = document.getElementById('pdf');
+  canvas.width = vp.width; canvas.height = vp.height;
+  await r.page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise;
+  r.vp = vp;
+}
+function highlight(segs) {
+  const box = document.getElementById('hls');
+  if (!box || !current || !current.vp) return;
+  const W = current.vp.width, H = current.vp.height;
+  box.innerHTML = (segs || []).map(s => {
+    const [x1, y1, x2, y2] = current.vp.convertToViewportRectangle([s.x - 2, s.y - 3, s.x + s.w + 2, s.y + s.h + 1]);
+    const l = Math.min(x1, x2) / W * 100, t = Math.min(y1, y2) / H * 100, w = Math.abs(x2 - x1) / W * 100, h = Math.abs(y2 - y1) / H * 100;
+    return `<div class="hl" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%"></div>`;
+  }).join('');
+}
+
+function decisionHTML(r, d, k) {
+  const pick = (val, label) => `<button class="choice" data-k="${k}" data-v="${esc(val)}" aria-pressed="${d.choice === val}">${label}</button>`;
+  const cls = d.choice ? 'done' : (d.type === 'map' || d.type === 'date') ? 'bad' : d.type === 'credit' ? 'info' : '';
+  if (d.type === 'price') {
+    const L = d.line, diff = (d.poEach - L.agreed) * L.qtyEach;
+    const lower = diff < 0;
+    return `<div class="decision ${cls}"><h3>Line ${L.n}: price differs from the agreed price</h3>
+      <p>${esc(CATALOG[L.code].desc)}: PO says ${gbp(d.poEach)} each, agreed price is ${gbp(L.agreed)}. ${lower ? `Accepting the PO price gives away ${gbp(-diff)} on this line.` : `Invoicing at the PO price would charge ${gbp(diff)} more than agreed, which the customer is likely to query.`}</p>
+      <div class="choices">${pick('agreed', 'Use agreed price ' + gbp(L.agreed))}${pick('po', 'Accept PO price ' + gbp(d.poEach))}${pick('ask', 'Ask the customer')}</div></div>`;
+  }
+  if (d.type === 'map') {
+    const L = d.line, s = d.suggestion;
+    return `<div class="decision ${cls}"><h3>Line ${L.n}: ${L.it.ref ? `customer code ${esc(L.it.ref)} is new` : 'item has no product code'}</h3>
+      <p>"${esc(L.it.text)}"${L.it.price == null ? ', no price given' : ''}. ${s ? `Suggested: <code>${s.code}</code> ${esc(CATALOG[s.code].desc)} (${esc(s.basis)}).` : 'No confident match.'}</p>
+      <div class="choices">${s ? pick('map', `Use ${s.code}${L.it.ref ? ' and remember for this customer' : ''}`) : ''}${pick('ask', 'Ask the customer')}${pick('drop', 'Leave this line out')}</div></div>`;
+  }
+  if (d.type === 'date') return `<div class="decision ${cls}"><h3>No delivery date</h3><p>The email says "deliver whenever you can". The next standard delivery run is Tuesday 18 November.</p><div class="choices">${pick('next', 'Book Tue 18 Nov')}${pick('ask', 'Ask the customer')}</div></div>`;
+  if (d.type === 'credit') return `<div class="decision ${cls}"><h3>Credit limit</h3><p>Account ${r.cust.account} owes ${gbp(r.cust.credit.balance)} against a ${gbp(r.cust.credit.limit)} limit. This order (${gbp(d.total)}) takes it over.</p><div class="choices">${pick('hold', 'Create the draft on credit hold')}${pick('release', 'Ask accounts to release')}</div></div>`;
+  return '';
+}
+
+function customerEmail(r) {
+  const asks = [];
+  r.issues.forEach(d => {
+    if (d.choice !== 'ask') return;
+    if (d.type === 'price') asks.push(`Line ${d.line.n} (${CATALOG[d.line.code].desc}) shows ${gbp(d.poEach)} each; our agreed price is ${gbp(d.line.agreed)}. Can you confirm which price you expect?`);
+    if (d.type === 'map') asks.push(`"${d.line.it.text}": ${d.suggestion ? `is that our ${d.suggestion.code} ${CATALOG[d.suggestion.code].desc}${/previous/.test(d.suggestion.basis) ? ', as on your previous orders' : ''}?` : 'can you send our product code?'}`);
+    if (d.type === 'date') asks.push('Is Tuesday 18 November OK for delivery?');
+  });
+  if (!asks.length) return '';
+  return `To: ${r.cust.email}\nSubject: Re: PO ${r.doc.po.v}\n\nHi ${r.cust.name.split(' ')[0]} team,\n\nThanks for PO ${r.doc.po.v}. Before we confirm:\n${asks.map((a, i) => `${i + 1}. ${a}`).join('\n')}\n\nThanks,\n${SUPPLIER}`;
+}
+
+function linesTable(r) {
+  return `<div class="hscroll"><table>
+    <thead><tr><th>#</th><th>Item</th><th class="num">Qty (each)</th><th class="num">Price</th><th class="num">Line</th><th>Status</th></tr></thead>
+    <tbody>${r.lines.map(L => {
+      const d = r.issues.find(x => x.line === L);
+      const code = L.code || (d && d.choice === 'map' && d.suggestion ? d.suggestion.code : null);
+      const price = code ? (d && d.type === 'price' && d.choice === 'po' ? d.poEach : CATALOG[code].price) : null;
+      const st = d ? (d.choice ? (d.choice === 'drop' ? ['bad', 'Left out'] : d.choice === 'ask' ? ['info', 'Asking'] : ['ok', 'Decided']) : (L.status === 'bad' ? ['bad', 'Hold'] : ['warn', 'Check'])) : ['ok', 'OK'];
+      return `<tr tabindex="0" data-n="${L.n}"><td>${L.n}</td><td class="item"><code>${esc(L.it.ref || 'no code')}</code>${code && code !== L.it.ref ? ` → <code>${code}</code>` : ''}<span class="why">${esc(code ? CATALOG[code].desc : L.it.text)}</span>${L.notes.map(n => `<span class="why">${esc(n)}</span>`).join('')}</td>
+        <td class="num">${L.qtyEach}</td><td class="num">${price != null ? gbp(price) : '–'}</td><td class="num">${price != null && (!d || d.choice !== 'drop') ? gbp(price * L.qtyEach) : '–'}</td><td><span class="tag ${st[0]}">${st[1]}</span></td></tr>`;
+    }).join('')}</tbody></table></div>`;
+}
+
+function total(r) {
+  return r.lines.reduce((s, L) => {
+    const d = r.issues.find(x => x.line === L);
+    if (d && d.choice === 'drop') return s;
+    const code = L.code || (d && d.choice === 'map' && d.suggestion ? d.suggestion.code : null);
+    if (!code) return s;
+    const price = d && d.type === 'price' && d.choice === 'po' ? d.poEach : CATALOG[code].price;
+    return s + price * L.qtyEach;
+  }, 0);
+}
+
+function renderDetail() {
+  const r = current;
+  const draft = document.getElementById('draft');
+  const meta = `<dl class="meta">
+    <dt>Customer</dt><dd data-hl="po">${esc(r.cust.name)} <span class="why" style="display:inline">· ${r.cust.account}</span></dd>
+    <dt>Their PO</dt><dd data-hl="po">${esc(r.doc.po.v)}</dd>
+    <dt>PO date</dt><dd data-hl="date">${esc(r.doc.date.v)}</dd>
+    <dt>Deliver to</dt><dd data-hl="deliver">${esc(r.doc.deliver.v || 'not given')}</dd>
+    ${r.doc.note.v ? `<dt>Note</dt><dd data-hl="note">${esc(r.doc.note.v)}</dd>` : ''}
+  </dl>`;
+  let body = '';
+  if (r.kind === 'dup') {
+    body = `<div class="result neutral"><h3>Duplicate stopped: no second order created</h3>
+      <p class="note">Same PO number and the same ${r.doc.items.length} lines as the email at ${r.original.sample.time}${r.original.approved ? `, already approved as ${r.original.so}` : ''}. The customer's note says: "${esc(r.doc.note.v || '')}"</p>
+      <div class="mail">To: ${esc(r.cust.email)}\nSubject: Re: PO ${esc(r.doc.po.v)}\n\nHi ${esc(r.cust.name.split(' ')[0])} team,\n\nYes, we have PO ${esc(r.doc.po.v)} (received ${r.original.sample.time} today) and it is being processed. No need to send it again.\n\nThanks,\n${SUPPLIER}</div>
+      <p class="note">Reply drafted for a person to send. Nothing is sent automatically.</p></div>`;
+  } else if (r.kind === 'rev') {
+    body = `<div class="result neutral"><h3>Revision of PO ${esc(r.original.doc.po.v)}: update the existing draft</h3>
+      <p class="note">This replaces the email at ${r.original.sample.time}. Changed lines:</p>
+      <table class="diff"><thead><tr><th>Item</th><th class="num">Was</th><th class="num">Now</th></tr></thead><tbody>${r.diff.map(x => `<tr${x.changed ? '' : ' style="opacity:.55"'}><td><code>${esc(x.it.ref)}</code> <span class="why" style="display:inline">${esc(CATALOG[x.it.ref] ? CATALOG[x.it.ref].desc : x.it.text)}</span></td><td class="num">${x.o ? (x.changed ? `<del>${x.o.qty}</del>` : x.o.qty) : '–'}</td><td class="num">${x.changed ? `<ins>${x.it.qty}</ins>` : x.it.qty}</td></tr>`).join('')}</tbody></table>
+      <div class="actions"><button class="btn" id="applyRev"${r.applied ? ' disabled' : ''}>${r.applied ? 'Draft updated' : 'Update the draft for ' + esc(r.original.doc.po.v)}</button></div>
+      ${r.applied ? `<p class="note">Draft ${r.original.so || 'for ' + esc(r.original.doc.po.v)} now shows the revised quantities. The price check from the original PO still applies.</p>` : ''}</div>`;
+  } else {
+    const open = r.issues.filter(d => !d.choice).length;
+    const mail = customerEmail(r);
+    body = `${r.issues.length ? `<div class="decisions">${r.issues.map((d, k) => decisionHTML(r, d, k)).join('')}</div>` : '<p><span class="tag ok">All lines checked</span> <span class="note">Codes, units and prices match the price list.</span></p>'}
+      ${linesTable(r)}
+      <p class="note" style="margin:8px 0 0">Draft value <b>${gbp(total(r))}</b> · hover a line to see where it came from in the PDF</p>
+      ${mail ? `<details open><summary>Email to the customer (drafted, not sent)</summary><div class="mail">${esc(mail)}</div></details>` : ''}
+      <div class="actions">
+        <button class="btn" id="approve"${open || r.approved ? ' disabled' : ''}>${r.approved ? 'Approved' : open ? `Approve (${open} decision${open > 1 ? 's' : ''} left)` : `Create draft in ${SYSTEM}`}</button>
+        <button class="btn ghost" id="csv">Download import file (CSV)</button>
+      </div>
+      ${r.approved ? `<div class="result"><h3>Draft sales order ${r.so} created in ${SYSTEM} (simulated)</h3><p class="note">${r.lines.length} lines, ${gbp(total(r))}${r.issues.some(d => d.type === 'credit') ? ', on credit hold until accounts release it' : ''}. Linked to the original PDF and email.</p></div>` : ''}`;
+  }
+  draft.innerHTML = meta + body + `<details><summary>Audit trail</summary><ul class="audit">${r.log.map(([t, m]) => `<li><span>${t}</span>${esc(m)}</li>`).join('')}</ul></details>`;
+
+  draft.querySelectorAll('tbody tr[data-n]').forEach(tr => {
+    const L = r.lines[+tr.dataset.n - 1];
+    tr.onmouseenter = tr.onfocus = () => highlight(L.it.segs);
+    tr.onmouseleave = () => highlight([]);
+  });
+  draft.querySelectorAll('[data-hl]').forEach(el => {
+    el.onmouseenter = () => highlight((r.doc[el.dataset.hl] || {}).segs);
+    el.onmouseleave = () => highlight([]);
+  });
+  draft.querySelectorAll('.choice').forEach(b => b.onclick = () => {
+    const d = r.issues[+b.dataset.k];
+    d.choice = b.dataset.v;
+    const labels = {agreed: 'use agreed price', po: 'accept PO price', ask: 'ask the customer', map: 'use suggested item' + (d.line && d.line.it.ref ? ' and remember it' : ''), drop: 'leave line out', next: 'book Tue 18 Nov', hold: 'create on credit hold', release: 'ask accounts to release'};
+    r.log.push([plus(r.sample.time, 3 + r.log.length), `You chose to ${labels[d.choice]}${d.line ? ` (line ${d.line.n})` : ''}`]);
+    if (d.type === 'map' && d.choice === 'map' && d.line.it.ref && d.suggestion) { (r.cust.map = r.cust.map || {})[d.line.it.ref] = d.suggestion.code; }
+    renderDetail(); renderInbox();
+  });
+  const ap = document.getElementById('approve');
+  if (ap) ap.onclick = () => {
+    r.approved = true; r.so = 'SO-' + soNext++;
+    r.log.push([plus(r.sample.time, 4 + r.log.length), `Approved by you. Draft sales order ${r.so} created in ${SYSTEM}`]);
+    renderDetail(); renderInbox();
   };
-  document.getElementById('csv').onclick = () => {
-    const head = 'AccountRef,CustomerOrderNo,LineNo,ProductCode,Qty,UnitPrice,Status,Note';
-    const csv = [head, ...rows.map(r => [cust.account, doc.po, r.n, r.code || r.it.ref, r.code ? r.qtyEach : r.it.qty, r.code ? r.listEach.toFixed(2) : '', r.status.toUpperCase(), '"' + r.flags.join('; ').replace(/"/g, "'") + '"'].join(','))].join('\n');
+  const rv = document.getElementById('applyRev');
+  if (rv) rv.onclick = () => {
+    r.applied = true;
+    r.log.push([plus(r.sample.time, 3), `You applied the revision to the draft for ${r.original.doc.po.v}`]);
+    r.original.log.push([plus(r.sample.time, 3), `Updated from revised PO ${r.doc.po.v}: ${r.diff.filter(x => x.changed).map(x => `${x.it.ref} qty → ${x.it.qty}`).join(', ')}`]);
+    renderDetail(); renderInbox();
+  };
+  const cv = document.getElementById('csv');
+  if (cv) cv.onclick = () => {
+    const rows = r.lines.map(L => { const d = r.issues.find(x => x.line === L); const code = L.code || (d && d.choice === 'map' && d.suggestion ? d.suggestion.code : ''); const price = code ? (d && d.type === 'price' && d.choice === 'po' ? d.poEach : CATALOG[code].price) : ''; return [r.cust.account, r.doc.po.v, L.n, code || L.it.ref || '', L.qtyEach, price === '' ? '' : price.toFixed(2), d ? (d.choice || 'OPEN').toUpperCase() : 'OK'].join(','); });
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'}));
-    a.download = `draft-order-${doc.po.replace(/\W+/g, '-')}.csv`;
+    a.href = URL.createObjectURL(new Blob([['AccountRef,CustomerOrderNo,LineNo,ProductCode,Qty,UnitPrice,Decision', ...rows].join('\n')], {type: 'text/csv'}));
+    a.download = `draft-order-${r.doc.po.v.replace(/\W+/g, '-')}.csv`;
     a.click();
   };
 }
 
-async function open(sample, btn) {
-  document.querySelectorAll('.inbox button').forEach(b => b.setAttribute('aria-pressed', b === btn));
-  const res = document.getElementById('result');
-  res.innerHTML = `<div class="pane"><div><h2>Original PDF</h2><canvas id="pdf"></canvas><p class="note"><a href="samples/${sample.file}" target="_blank" rel="noopener">Open PDF</a></p></div><div><h2>Draft sales order</h2><div id="draft"><p class="empty">Reading…</p></div></div></div>`;
-  try {
-    const t0 = performance.now();
-    const lines = await readPdf('samples/' + sample.file, document.getElementById('pdf'));
-    const doc = parse(lines);
-    if (!doc) { document.getElementById('draft').innerHTML = '<p class="empty">New layout. This customer needs a one-time setup.</p>'; return; }
-    render(doc, lines, Math.max(1, Math.round(performance.now() - t0)));
-  } catch (e) {
-    document.getElementById('draft').innerHTML = '<p class="empty">Could not load the sample. Please refresh.</p>';
-  }
+async function open(r) {
+  current = r;
+  renderInbox();
+  document.getElementById('result').innerHTML = `<div class="pane"><div><h2>Original PDF</h2><div class="pdfbox"><canvas id="pdf"></canvas><div id="hls"></div></div><p class="note"><a href="samples/${r.sample.file}" target="_blank" rel="noopener">Open PDF</a> · received ${r.sample.time} from ${esc(r.cust.email)}</p></div><div><h2>Draft sales order</h2><div id="draft"></div></div></div>`;
+  renderDetail();
+  await drawPdf(r);
 }
 
-const inbox = document.getElementById('inbox');
-SAMPLES.forEach((s, i) => {
-  const b = document.createElement('button');
-  b.setAttribute('aria-pressed', 'false');
-  b.innerHTML = `${esc(s.label)}<small>${esc(s.sub)}</small>`;
-  b.onclick = () => open(s, b);
-  inbox.appendChild(b);
-  if (i === 0) setTimeout(() => open(s, b), 0);
-});
+(async () => {
+  try {
+    for (const s of SAMPLES) {
+      const {page, lines} = await readPdf('samples/' + s.file);
+      const doc = parse(lines);
+      if (!doc) continue;
+      const r = analyse(doc, results, s);
+      r.page = page;
+      results.push(r);
+    }
+    renderOverview();
+    renderInbox();
+    open(results[0]);
+  } catch (e) {
+    document.getElementById('result').innerHTML = '<p class="empty">Could not load the samples. Please refresh.</p>';
+  }
+})();
 </script>
 </body>
 </html>
