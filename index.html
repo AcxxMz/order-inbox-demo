@@ -335,7 +335,7 @@ function decisionHTML(r, d, k) {
       <p>"${esc(L.it.text)}"${L.it.price == null ? ', no price given' : ''}. ${s ? `Suggested: <code>${s.code}</code> ${esc(CATALOG[s.code].desc)} (${esc(s.basis)}).` : 'No confident match.'}</p>
       <div class="choices">${s ? pick('map', `Use ${s.code}${L.it.ref ? ' and remember for this customer' : ''}`) : ''}${pick('ask', 'Ask the customer')}${pick('drop', 'Leave this line out')}</div></div>`;
   }
-  if (d.type === 'date') return `<div class="decision ${cls}"><h3>No delivery date</h3><p>The email says "deliver whenever you can". The next standard delivery run is Tuesday 18 November.</p><div class="choices">${pick('next', 'Book Tue 18 Nov')}${pick('ask', 'Ask the customer')}</div></div>`;
+  if (d.type === 'date') return `<div class="decision ${cls}"><h3>No delivery date</h3><p>The email says "deliver whenever you can". The next standard delivery run is Wednesday 18 November.</p><div class="choices">${pick('next', 'Book Wed 18 Nov')}${pick('ask', 'Ask the customer')}</div></div>`;
   if (d.type === 'credit') return `<div class="decision ${cls}"><h3>Credit limit</h3><p>Account ${r.cust.account} owes ${gbp(r.cust.credit.balance)} against a ${gbp(r.cust.credit.limit)} limit. This order (${gbp(d.total)}) takes it over.</p><div class="choices">${pick('hold', 'Create the draft on credit hold')}${pick('release', 'Ask accounts to release')}</div></div>`;
   return '';
 }
@@ -346,7 +346,7 @@ function customerEmail(r) {
     if (d.choice !== 'ask') return;
     if (d.type === 'price') asks.push(`Line ${d.line.n} (${CATALOG[d.line.code].desc}) shows ${gbp(d.poEach)} each; our agreed price is ${gbp(d.line.agreed)}. Can you confirm which price you expect?`);
     if (d.type === 'map') asks.push(`"${d.line.it.text}": ${d.suggestion ? `is that our ${d.suggestion.code} ${CATALOG[d.suggestion.code].desc}${/previous/.test(d.suggestion.basis) ? ', as on your previous orders' : ''}?` : 'can you send our product code?'}`);
-    if (d.type === 'date') asks.push('Is Tuesday 18 November OK for delivery?');
+    if (d.type === 'date') asks.push('Is Wednesday 18 November OK for delivery?');
   });
   if (!asks.length) return '';
   return `To: ${r.cust.email}\nSubject: Re: PO ${r.doc.po.v}\n\nHi ${r.cust.name.split(' ')[0]} team,\n\nThanks for PO ${r.doc.po.v}. Before we confirm:\n${asks.map((a, i) => `${i + 1}. ${a}`).join('\n')}\n\nThanks,\n${SUPPLIER}`;
@@ -425,7 +425,7 @@ function renderDetail() {
   draft.querySelectorAll('.choice').forEach(b => b.onclick = () => {
     const d = r.issues[+b.dataset.k];
     d.choice = b.dataset.v;
-    const labels = {agreed: 'use agreed price', po: 'accept PO price', ask: 'ask the customer', map: 'use suggested item' + (d.line && d.line.it.ref ? ' and remember it' : ''), drop: 'leave line out', next: 'book Tue 18 Nov', hold: 'create on credit hold', release: 'ask accounts to release'};
+    const labels = {agreed: 'use agreed price', po: 'accept PO price', ask: 'ask the customer', map: 'use suggested item' + (d.line && d.line.it.ref ? ' and remember it' : ''), drop: 'leave line out', next: 'book Wed 18 Nov', hold: 'create on credit hold', release: 'ask accounts to release'};
     r.log.push([plus(r.sample.time, 3 + r.log.length), `You chose to ${labels[d.choice]}${d.line ? ` (line ${d.line.n})` : ''}`]);
     if (d.type === 'map' && d.choice === 'map' && d.line.it.ref && d.suggestion) { (r.cust.map = r.cust.map || {})[d.line.it.ref] = d.suggestion.code; }
     renderDetail(); renderInbox();
